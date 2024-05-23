@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import {
   Form,
@@ -11,10 +12,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { z } from "zod";
 import { PasswordInput } from "../ui/password-input";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { useLibraryPostMutation } from "@/hooks/useMutation";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { TResponse } from "@/types/main";
+
+interface TSignupRequest {
+  username: string;
+  email: string;
+  password: string;
+}
 
 export const SignupFormSchema = z.object({
   username: z.string().min(3, { message: "Invalid username" }),
@@ -23,6 +35,7 @@ export const SignupFormSchema = z.object({
 });
 
 export default function SignupForm() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof SignupFormSchema>>({
     resolver: zodResolver(SignupFormSchema),
     defaultValues: {
@@ -33,9 +46,30 @@ export default function SignupForm() {
     mode: "onChange",
     reValidateMode: "onChange",
   });
+
+  const { trigger, isMutating } = useLibraryPostMutation<
+    TSignupRequest,
+    TResponse<Record<string, string>>
+  >("/auth/signup", {
+    onSuccess(data) {
+      if (data.message) {
+        toast.success(data.message);
+        form.reset();
+        router.replace("/login");
+      }
+    },
+    onError(error) {
+      toast.error(error.message);
+    },
+  });
+
+  async function onSubmit(data: z.infer<typeof SignupFormSchema>) {
+    await trigger(data);
+  }
+
   return (
     <Form {...form}>
-      <form className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="username"
@@ -82,7 +116,8 @@ export default function SignupForm() {
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isMutating}>
+          {isMutating && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
           Signup
         </Button>
 

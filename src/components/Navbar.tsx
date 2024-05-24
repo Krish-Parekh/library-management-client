@@ -3,7 +3,7 @@
 import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useCookies } from "react-cookie";
+import { Cookies } from "react-cookie";
 import { AccessTokenKey } from "@/constants/strings";
 import { cookieOptions } from "@/constants/cookie";
 
@@ -13,12 +13,11 @@ interface INavbarProps {
 
 export default function Navbar({ username }: INavbarProps) {
   const router = useRouter();
-  const [{ access_token }, removeCookie] = useCookies([AccessTokenKey]);
 
-  const handleLogout = useCallback(() => {
-    removeCookie(AccessTokenKey, cookieOptions);
-    router.replace("/login");
-  }, [removeCookie, router]);
+  const handleLogout = () => {
+    new Cookies().remove(AccessTokenKey, cookieOptions);
+    router.push("/login");
+  };
 
   return (
     <div className="flex items-center justify-between">

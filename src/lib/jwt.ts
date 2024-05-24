@@ -5,3 +5,11 @@ export function getExpiryFromToken(token?: string): Date {
   }
   throw new Error("No token provided");
 }
+
+export function getRoleFromToken(token?: string): string {
+  if (token) {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.role;
+  }
+  throw new Error("No token provided");
+}

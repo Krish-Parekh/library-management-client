@@ -22,7 +22,8 @@ import { useRouter } from "next/navigation";
 import { useLibraryPostMutation } from "@/hooks/useMutation";
 import { TResponse } from "@/types/main";
 import { AccessTokenKey } from "@/constants/strings";
-import { getExpiryFromToken } from "@/lib/jwt";
+import { getExpiryFromToken, getRoleFromToken } from "@/lib/jwt";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 interface TLoginRequest {
   email: string;
@@ -60,11 +61,16 @@ export default function LoginForm() {
       if (data.message) {
         setCookie(AccessTokenKey, token, {
           ...cookieOptions,
-          expires: getExpiryFromToken(token)
+          expires: getExpiryFromToken(token),
         });
+        const role = getRoleFromToken(token);
         toast.success(data.message);
         form.reset();
-        router.replace("/");
+        if (role === "admin") {
+          router.replace("/admin");
+        } else {
+          router.replace("/");
+        }
       }
     },
     onError(error) {
@@ -113,7 +119,8 @@ export default function LoginForm() {
             Forgot Password?
           </Link>
         </div>
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isMutating}>
+          {isMutating && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
           Login
         </Button>
         <div className=" text-center">

@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
   const role = request.cookies.get("role")?.value;
 >>>>>>> Stashed changes
   if (!isAuthenticated && protectedRoutes.includes(pathname)) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   } else if (isAuthenticated && publicRoutes.includes(pathname)) {
 <<<<<<< Updated upstream
     return NextResponse.redirect(new URL('/', request.url));

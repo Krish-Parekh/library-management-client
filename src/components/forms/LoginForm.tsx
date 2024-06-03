@@ -17,8 +17,6 @@ import { cookieOptions } from "@/constants/cookie";
 import { PasswordInput } from "../ui/password-input";
 import { Button } from "../ui/button";
 import Link from "next/link";
-<<<<<<< Updated upstream
-=======
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useLibraryPostMutation } from "@/hooks/useMutation";
@@ -37,7 +35,6 @@ interface TLoginResponse {
   userId: string;
   role: string;
 }
->>>>>>> Stashed changes
 
 export const LoginFormSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -56,8 +53,6 @@ export default function LoginForm() {
     mode: "onChange",
     reValidateMode: "onChange",
   });
-<<<<<<< Updated upstream
-=======
 
   const { trigger, isMutating } = useLibraryPostMutation<
     TLoginRequest,
@@ -101,7 +96,6 @@ export default function LoginForm() {
     await trigger(data);
   }
 
->>>>>>> Stashed changes
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

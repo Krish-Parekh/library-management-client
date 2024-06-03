@@ -17,6 +17,7 @@ import UserForm from "./forms/UserForm";
 import AuthorForm from "./forms/AuthorForm";
 import CategoryForm from "./forms/CategoryForm";
 import useSearchParams from "@/hooks/useSearchParams";
+import { Suspense } from "react";
 
 interface AdminSheetProps {
   trigger: React.ReactNode;
@@ -40,22 +41,24 @@ export function AdminSheet({
 }: AdminSheetProps) {
   const { updateSearchParams } = useSearchParams();
   return (
-    <Sheet
-      onOpenChange={(open: boolean) => {
-        if (!open) {
-          updateSearchParams({ id: undefined });
-        }
-      }}
-    >
-      <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent className="w-[500px] sm:w-[540px] sm:max-w-[540px]">
-        <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
-          <SheetDescription>{description}</SheetDescription>
-        </SheetHeader>
-        {formLookup[type]}
-      </SheetContent>
-      <SheetClose />
-    </Sheet>
+    <Suspense fallback={null}>
+      <Sheet
+        onOpenChange={(open: boolean) => {
+          if (!open) {
+            updateSearchParams({ id: undefined });
+          }
+        }}
+      >
+        <SheetTrigger asChild>{trigger}</SheetTrigger>
+        <SheetContent className="w-[500px] sm:w-[540px] sm:max-w-[540px]">
+          <SheetHeader>
+            <SheetTitle>{title}</SheetTitle>
+            <SheetDescription>{description}</SheetDescription>
+          </SheetHeader>
+          {formLookup[type]}
+        </SheetContent>
+        <SheetClose />
+      </Sheet>
+    </Suspense>
   );
 }

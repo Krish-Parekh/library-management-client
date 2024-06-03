@@ -16,10 +16,8 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { z } from "zod";
 import { PasswordInput } from "../ui/password-input";
 import { Button } from "../ui/button";
-import Link from "next/link";
 import { useLibraryPostMutation } from "@/hooks/useMutation";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { TResponse } from "@/types/main";
 
 interface TSignupRequest {
@@ -34,8 +32,7 @@ export const SignupFormSchema = z.object({
   password: z.string().min(8),
 });
 
-export default function SignupForm() {
-  const router = useRouter();
+export default function UserForm() {
   const form = useForm<z.infer<typeof SignupFormSchema>>({
     resolver: zodResolver(SignupFormSchema),
     defaultValues: {
@@ -55,7 +52,6 @@ export default function SignupForm() {
       if (data.message) {
         toast.success(data.message);
         form.reset();
-        router.replace("/login");
       }
     },
     onError(error) {
@@ -120,12 +116,6 @@ export default function SignupForm() {
           {isMutating && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
           Signup
         </Button>
-
-        <div className=" text-center">
-          <Link href="/login" className="text-sm">
-            Already have an account? Login
-          </Link>
-        </div>
       </form>
     </Form>
   );

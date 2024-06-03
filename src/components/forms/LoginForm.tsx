@@ -12,9 +12,27 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useCookies } from "react-cookie";
+import { cookieOptions } from "@/constants/cookie";
 import { PasswordInput } from "../ui/password-input";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useLibraryPostMutation } from "@/hooks/useMutation";
+import { TResponse } from "@/types/main";
+import { AccessTokenKey } from "@/constants/strings";
+import { getExpiryFromToken, getRoleFromToken } from "@/lib/jwt";
+import { ReloadIcon } from "@radix-ui/react-icons";
+
+interface TLoginRequest {
+  email: string;
+  password: string;
+}
+
+interface TLoginResponse {
+  token: string;
+}
 
 export const LoginFormSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -22,6 +40,8 @@ export const LoginFormSchema = z.object({
 });
 
 export default function LoginForm() {
+  const router = useRouter();
+  const setCookie = useCookies<string>([])[1];
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -31,9 +51,41 @@ export default function LoginForm() {
     mode: "onChange",
     reValidateMode: "onChange",
   });
+
+  const { trigger, isMutating } = useLibraryPostMutation<
+    TLoginRequest,
+    TResponse<TLoginResponse>
+  >("/auth/login", {
+    onSuccess(data) {
+      const { token } = data.data;
+      if (data.message) {
+        setCookie(AccessTokenKey, token, {
+          ...cookieOptions,
+          expires: getExpiryFromToken(token),
+        });
+        const role = getRoleFromToken(token);
+        console.log("Role ", role);
+        toast.success(data.message);
+        form.reset();
+        if (role === "admin") {
+          router.replace("/admin");
+        } else {
+          router.replace("/");
+        }
+      }
+    },
+    onError(error) {
+      toast.error(error.message);
+    },
+  });
+
+  async function onSubmit(data: z.infer<typeof LoginFormSchema>) {
+    await trigger(data);
+  }
+
   return (
     <Form {...form}>
-      <form className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="email"
@@ -68,7 +120,8 @@ export default function LoginForm() {
             Forgot Password?
           </Link>
         </div>
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isMutating}>
+          {isMutating && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
           Login
         </Button>
         <div className=" text-center">

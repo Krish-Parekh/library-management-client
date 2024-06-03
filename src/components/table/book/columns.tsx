@@ -10,6 +10,7 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Badge } from "@/components/ui/badge";
 import { Author, Book, Category } from "@/types/main";
 import DeleteItem from "../DeleteItem";
+import TrashItem from "../TrashItem";
 
 export const bookTableColumns: ColumnDef<Book>[] = [
   {
@@ -62,18 +63,10 @@ export const bookTableColumns: ColumnDef<Book>[] = [
       const id = row.original._id;
       const url = `/book/${id}/`;
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <DotsHorizontalIcon />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DeleteItem
-              url={url}
-              revalidateURL={["/author/", "/book/", "/category/"]}
-            />
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <TrashItem
+          url={url}
+          revalidationURL={["/author/", "/book/", "/category/"]}
+        />
       );
     },
   },

@@ -9,6 +9,7 @@ import {
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Author, Category } from "@/types/main";
 import DeleteItem from "../DeleteItem";
+import TrashItem from "../TrashItem";
 
 export const categoryTableColumns: ColumnDef<Category>[] = [
   {
@@ -30,18 +31,10 @@ export const categoryTableColumns: ColumnDef<Category>[] = [
       const id = row.original._id;
       const url = `/category/${id}/`;
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <DotsHorizontalIcon />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DeleteItem
-              url={url}
-              revalidateURL={["/author/", "/book/", "/category/"]}
-            />
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <TrashItem
+          url={url}
+          revalidationURL={["/category/", "/author/", "/book/"]}
+        />
       );
     },
   },

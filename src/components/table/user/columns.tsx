@@ -5,9 +5,13 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { DotsHorizontalIcon, TrashIcon } from "@radix-ui/react-icons";
 import { User } from "@/types/main";
 import DeleteItem from "../DeleteItem";
+import { Button } from "@/components/ui/button";
+import { DeleteIcon } from "lucide-react";
+import TrashItem from "../TrashItem";
+import EditItem from "../EditItem";
 
 export const userTableColumns: ColumnDef<User>[] = [
   {
@@ -37,19 +41,12 @@ export const userTableColumns: ColumnDef<User>[] = [
     id: "actions",
     cell: ({ row }) => {
       const id = row.original._id;
-      const role = row.original.role;
       const url = `/user/${id}/`;
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <DotsHorizontalIcon />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {role !== "admin" && (
-              <DeleteItem url={url} revalidateURL={["/user/"]} />
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex gap-x-4 justify-end">
+          <TrashItem url={url} revalidationURL={["/user/"]} />
+          <EditItem />
+        </div>
       );
     },
   },

@@ -8,25 +8,24 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Book } from "@/types/main";
 
 interface IBookCardProps {
-  title: string;
-  description: string;
-  tags: string[];
+  book: Book;
 }
 
-export default function BookCard({ title, description, tags }: IBookCardProps) {
+export default function BookCard({ book }: IBookCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle>{book.title}</CardTitle>
+        <CardDescription>{book.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-2">
-          <Badge variant="outline">Fiction</Badge>
-          <Badge variant="outline">Adventure</Badge>
-          <Badge variant="outline">Self-Discovery</Badge>
+          <Badge variant="outline">{book.categoryId.name}</Badge>
+          <Badge variant="outline">{book.isbn}</Badge>
+          <Badge variant="outline">{book.authorId.name}</Badge>
         </div>
         <Button>Download</Button>
       </CardContent>

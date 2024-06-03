@@ -17,7 +17,7 @@ import { categoryTableColumns } from "../table/category/columns";
 
 export default function AdminDashboard() {
   const { users, userLoading } = useLibraryUser();
-  const { books, bookLoading } = useLibraryBook();
+  const { books, bookLoading } = useLibraryBook({ search: "" });
   const { authors, authorLoading } = useLibraryAuthor();
   const { categories, categoryLoading } = useLibraryCategory();
   return (

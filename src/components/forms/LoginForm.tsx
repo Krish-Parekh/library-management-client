@@ -15,6 +15,27 @@ import { z } from "zod";
 import { PasswordInput } from "../ui/password-input";
 import { Button } from "../ui/button";
 import Link from "next/link";
+<<<<<<< Updated upstream
+=======
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useLibraryPostMutation } from "@/hooks/useMutation";
+import { TResponse } from "@/types/main";
+import { AccessTokenKey, RoleKey, UserIdKey } from "@/constants/strings";
+import { getExpiryFromToken, getRoleFromToken, getUserIdFromToken } from "@/lib/jwt";
+import { ReloadIcon } from "@radix-ui/react-icons";
+
+interface TLoginRequest {
+  email: string;
+  password: string;
+}
+
+interface TLoginResponse {
+  token: string;
+  userId: string;
+  role: string;
+}
+>>>>>>> Stashed changes
 
 export const LoginFormSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -31,6 +52,52 @@ export default function LoginForm() {
     mode: "onChange",
     reValidateMode: "onChange",
   });
+<<<<<<< Updated upstream
+=======
+
+  const { trigger, isMutating } = useLibraryPostMutation<
+    TLoginRequest,
+    TResponse<TLoginResponse>
+  >("/auth/login", {
+    onSuccess(data) {
+      const { token } = data.data;
+      if (data.message) {
+        setCookie(AccessTokenKey, token, {
+          ...cookieOptions,
+          expires: getExpiryFromToken(token),
+        });
+        
+        const userId = getUserIdFromToken(token);
+        const role = getRoleFromToken(token);
+
+        setCookie(UserIdKey, userId, {
+          ...cookieOptions,
+          expires: getExpiryFromToken(token),
+        });
+
+        setCookie(RoleKey, role, {
+          ...cookieOptions,
+          expires: getExpiryFromToken(token),
+        });
+        toast.success(data.message);
+        form.reset();
+        if (role === "admin") {
+          router.replace("/admin");
+        } else {
+          router.replace("/");
+        }
+      }
+    },
+    onError(error) {
+      toast.error(error.message);
+    },
+  });
+
+  async function onSubmit(data: z.infer<typeof LoginFormSchema>) {
+    await trigger(data);
+  }
+
+>>>>>>> Stashed changes
   return (
     <Form {...form}>
       <form className="space-y-4">

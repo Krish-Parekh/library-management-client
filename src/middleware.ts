@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { AccessTokenKey } from "@/constants/strings";
 
 export const protectedRoutes = ["/"];
-
 export const adminRoutes = ["/admin"];
 export const publicRoutes = ["/login", "/signup", "/reset-password"];
 

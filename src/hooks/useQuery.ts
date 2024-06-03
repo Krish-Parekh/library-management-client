@@ -31,7 +31,7 @@ function useQuery<Data>(
   });
 }
 
-export function useBlockchainServerQuery<Data>(
+export function useLibraryQuery<Data>(
   key: string | null,
   config?: SWRConfiguration<Data, Error>
 ) {

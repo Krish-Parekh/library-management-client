@@ -8,53 +8,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Badge } from "@/components/ui/badge";
-
-export interface Book {
-  id: string;
-  title: string;
-  description: string;
-  author: string;
-  isbn: string;
-  category: string;
-}
-
-export const bookDummyData: Book[] = [
-  {
-    id: "1",
-    title: "Book 1",
-    description: "Description 1",
-    author: "Author 1",
-    isbn: "123456",
-    category: "Fiction",
-  },
-  {
-    id: "2",
-    title: "Book 2",
-    description: "Description 2",
-    author: "Author 2",
-    isbn: "123457",
-    category: "Non-Fiction",
-  },
-  {
-    id: "3",
-    title: "Book 3",
-    description: "Description 3",
-    author: "Author 3",
-    isbn: "123458",
-    category: "Self-Help",
-  },
-];
+import { Book } from "@/types/main";
 
 export const bookTableColumns: ColumnDef<Book>[] = [
   {
-    id: "id",
+    id: "_id",
     header: "ID",
-    accessorKey: "id",
+    accessorKey: "_id",
+    cell: ({ row }) => {
+      return <div>{row.index + 1}</div>;
+    },
   },
   {
     id: "title",
     header: "Title",
     accessorKey: "title",
+    cell: ({ row }) => {
+      return <div>{row.getValue("title")}</div>;
+    },
   },
   {
     id: "description",

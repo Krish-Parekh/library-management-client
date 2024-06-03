@@ -7,75 +7,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
-
-export const userDummyData: User[] = [
-  {
-    id: "1",
-    name: "John Doe",
-    email: "john@gmail.com",
-    role: "Admin",
-  },
-  {
-    id: "2",
-    name: "Jane Parekh",
-    email: "jane@gmail.com",
-    role: "User",
-  },
-  {
-    id: "3",
-    name: "Alice",
-    email: "alice@gmail.com",
-    role: "User",
-  },
-  {
-    id: "4",
-    name: "Bob",
-    email: "bob@gmail.com",
-    role: "User",
-  },
-  {
-    id: "1",
-    name: "John Doe",
-    email: "john@gmail.com",
-    role: "Admin",
-  },
-  {
-    id: "2",
-    name: "Jane Parekh",
-    email: "jane@gmail.com",
-    role: "User",
-  },
-  {
-    id: "3",
-    name: "Alice",
-    email: "alice@gmail.com",
-    role: "User",
-  },
-  {
-    id: "4",
-    name: "Bob",
-    email: "bob@gmail.com",
-    role: "User",
-  },
-];
+import { User } from "@/types/main";
 
 export const userTableColumns: ColumnDef<User>[] = [
   {
-    id: "id",
+    id: "_id",
     header: "ID",
-    accessorKey: "id",
+    accessorKey: "_id",
+    cell: ({ row }) => {
+      return <div>{row.index + 1}</div>;
+    },
   },
   {
-    id: "name",
-    header: "Name",
-    accessorKey: "name",
+    id: "username",
+    header: "Username",
+    accessorKey: "username",
   },
   {
     id: "email",

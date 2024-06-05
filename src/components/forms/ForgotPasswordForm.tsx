@@ -1,3 +1,5 @@
+"use client";
+
 import React, { Suspense } from "react";
 import {
   Form,
@@ -16,7 +18,7 @@ import { useLibraryPostMutation } from "@/hooks/useMutation";
 import { TResponse } from "@/types/main";
 import { toast } from "sonner";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 interface TForgotPasswordRequest {
   email: string;

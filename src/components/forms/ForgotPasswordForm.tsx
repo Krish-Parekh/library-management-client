@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import {
   Form,
   FormField,
@@ -48,7 +48,9 @@ export default function ForgotPasswordForm() {
   >(URLs.post, {
     onSuccess(data) {
       if (data) {
-        toast.success("Password reset link sent successfully. Check your email.");
+        toast.success(
+          "Password reset link sent successfully. Check your email."
+        );
         router.replace("/login");
       }
     },
@@ -61,27 +63,31 @@ export default function ForgotPasswordForm() {
     await trigger(data);
   }
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="eg. krish@gmail.com" {...field} />
-              </FormControl>
-              <FormMessage>{form.formState.errors.email?.message}</FormMessage>
-            </FormItem>
-          )}
-        />
+    <Suspense fallback={null}>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="eg. krish@gmail.com" {...field} />
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.email?.message}
+                </FormMessage>
+              </FormItem>
+            )}
+          />
 
-        <Button type="submit" className="w-full" disabled={isMutating}>
-          {isMutating && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
-          Send Link
-        </Button>
-      </form>
-    </Form>
+          <Button type="submit" className="w-full" disabled={isMutating}>
+            {isMutating && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
+            Send Link
+          </Button>
+        </form>
+      </Form>
+    </Suspense>
   );
 }

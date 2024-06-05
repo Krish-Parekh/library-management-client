@@ -16,7 +16,7 @@ import { useLibraryPostMutation } from "@/hooks/useMutation";
 import { TResponse } from "@/types/main";
 import { toast } from "sonner";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface TForgotPasswordRequest {
   email: string;

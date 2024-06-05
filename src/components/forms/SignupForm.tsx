@@ -21,6 +21,7 @@ import { useLibraryPostMutation } from "@/hooks/useMutation";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { TResponse } from "@/types/main";
+import { SignupFormSchema } from "@/components/forms/schema/auth.schema";
 
 interface TSignupRequest {
   username: string;
@@ -28,11 +29,10 @@ interface TSignupRequest {
   password: string;
 }
 
-export const SignupFormSchema = z.object({
-  username: z.string().min(3, { message: "Invalid username" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(8),
-});
+const URLs = {
+  post: "/auth/signup",
+};
+
 
 export default function SignupForm() {
   const router = useRouter();
@@ -50,7 +50,7 @@ export default function SignupForm() {
   const { trigger, isMutating } = useLibraryPostMutation<
     TSignupRequest,
     TResponse<Record<string, string>>
-  >("/auth/signup", {
+  >(URLs.post, {
     onSuccess(data) {
       if (data.message) {
         toast.success(data.message);

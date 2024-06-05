@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Cookies } from "react-cookie";
-import { AccessTokenKey } from "@/constants/strings";
+import { AccessTokenKey, RoleKey, UserIdKey } from "@/constants/strings";
 import { cookieOptions } from "@/constants/cookie";
 
 interface INavbarProps {
@@ -16,6 +16,8 @@ export default function Navbar({ username }: INavbarProps) {
 
   const handleLogout = () => {
     new Cookies().remove(AccessTokenKey, cookieOptions);
+    new Cookies().remove(UserIdKey, cookieOptions);
+    new Cookies().remove(RoleKey, cookieOptions);
     router.push("/login");
   };
 

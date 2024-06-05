@@ -1,61 +1,54 @@
 "use client";
-
-import useSearchParams from "@/hooks/useSearchParams";
 import React from "react";
 import {
   Form,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-} from "../ui/form";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+  FormControl,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PasswordInput } from "../ui/password-input";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "../ui/button";
-import { ReloadIcon } from "@radix-ui/react-icons";
 import { useLibraryPostMutation } from "@/hooks/useMutation";
 import { TResponse } from "@/types/main";
 import { toast } from "sonner";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/router";
 
-interface TResetPasswordRequest {
-  userId: string;
-  token: string;
-  password: string;
+interface TForgotPasswordRequest {
+  email: string;
 }
 
-const resetPasswordSchema = z.object({
-  password: z.string().min(8).max(100),
+export const ForgotPasswordSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
 });
 
 const URLs = {
-  post: "/auth/reset-password/",
+  post: "/auth/forgot-password/",
 };
 
-export default function ResetPasswordForm() {
-  const { get } = useSearchParams();
-  const token = get("token");
-  const userId = get("id");
+export default function ForgotPasswordForm() {
   const router = useRouter();
-  const form = useForm<z.infer<typeof resetPasswordSchema>>({
-    resolver: zodResolver(resetPasswordSchema),
+  const form = useForm<z.infer<typeof ForgotPasswordSchema>>({
+    resolver: zodResolver(ForgotPasswordSchema),
     defaultValues: {
-      password: "",
+      email: "",
     },
     mode: "onChange",
     reValidateMode: "onChange",
   });
 
   const { trigger, isMutating } = useLibraryPostMutation<
-    TResetPasswordRequest,
+    TForgotPasswordRequest,
     TResponse<string>
   >(URLs.post, {
     onSuccess(data) {
       if (data) {
-        toast.success("Password reset successfully. You can now login.");
+        toast.success("Password reset link sent successfully. Check your email.");
         router.replace("/login");
       }
     },
@@ -64,33 +57,29 @@ export default function ResetPasswordForm() {
     },
   });
 
-  async function onSubmit(data: z.infer<typeof resetPasswordSchema>) {
-    if (!userId || !token) return;
-    await trigger({ password: data.password, userId, token });
+  async function onSubmit(data: z.infer<typeof ForgotPasswordSchema>) {
+    await trigger(data);
   }
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="password"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <PasswordInput {...field} />
+                <Input placeholder="eg. krish@gmail.com" {...field} />
               </FormControl>
-              <FormMessage>
-                {form.formState.errors.password?.message}
-              </FormMessage>
+              <FormMessage>{form.formState.errors.email?.message}</FormMessage>
             </FormItem>
           )}
         />
 
         <Button type="submit" className="w-full" disabled={isMutating}>
           {isMutating && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
-          Reset Password
+          Send Link
         </Button>
       </form>
     </Form>

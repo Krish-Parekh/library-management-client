@@ -14,16 +14,21 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCookies } from "react-cookie";
 import { cookieOptions } from "@/constants/cookie";
-import { PasswordInput } from "../ui/password-input";
-import { Button } from "../ui/button";
+import { PasswordInput } from "@/components/ui/password-input";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useLibraryPostMutation } from "@/hooks/useMutation";
 import { TResponse } from "@/types/main";
 import { AccessTokenKey, RoleKey, UserIdKey } from "@/constants/strings";
-import { getExpiryFromToken, getRoleFromToken, getUserIdFromToken } from "@/lib/jwt";
+import {
+  getExpiryFromToken,
+  getRoleFromToken,
+  getUserIdFromToken,
+} from "@/lib/jwt";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { LoginFormSchema } from "@/components/forms/schema/auth.schema";
 
 interface TLoginRequest {
   email: string;
@@ -36,10 +41,9 @@ interface TLoginResponse {
   role: string;
 }
 
-export const LoginFormSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(8),
-});
+const URLs = {
+  post: "/auth/login",
+}
 
 export default function LoginForm() {
   const router = useRouter();
@@ -57,7 +61,7 @@ export default function LoginForm() {
   const { trigger, isMutating } = useLibraryPostMutation<
     TLoginRequest,
     TResponse<TLoginResponse>
-  >("/auth/login", {
+  >(URLs.post, {
     onSuccess(data) {
       const { token } = data.data;
       if (data.message) {
@@ -65,7 +69,7 @@ export default function LoginForm() {
           ...cookieOptions,
           expires: getExpiryFromToken(token),
         });
-        
+
         const userId = getUserIdFromToken(token);
         const role = getRoleFromToken(token);
 
@@ -78,8 +82,10 @@ export default function LoginForm() {
           ...cookieOptions,
           expires: getExpiryFromToken(token),
         });
+        
         toast.success(data.message);
-        form.reset();
+        form.reset();  
+
         if (role === "admin") {
           router.replace("/admin");
         } else {
@@ -129,7 +135,7 @@ export default function LoginForm() {
           )}
         />
         <div>
-          <Link href="/reset-password" className="text-sm">
+          <Link href="/forgot-password" className="text-sm">
             Forgot Password?
           </Link>
         </div>
@@ -139,7 +145,8 @@ export default function LoginForm() {
         </Button>
         <div className=" text-center">
           <Link href="/signup" className="text-sm">
-            Don&apos;t have an account? Signup
+            Don&apos;t have an account?{" "}
+            <span className="underline font-bold">Signup</span>
           </Link>
         </div>
       </form>

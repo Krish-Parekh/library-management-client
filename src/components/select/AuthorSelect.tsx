@@ -10,11 +10,13 @@ import {
 import useLibraryAuthor from "@/hooks/useLibraryAuthor";
 
 interface AuthorSelectProps {
+  id?: string;
   onValueChange: (value: string) => void;
   defaultValue?: string;
 }
 
 export default function AuthorSelect({
+  id,
   onValueChange,
   defaultValue,
 }: AuthorSelectProps ) {

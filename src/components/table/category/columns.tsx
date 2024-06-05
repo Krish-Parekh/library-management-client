@@ -10,6 +10,7 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Author, Category } from "@/types/main";
 import DeleteItem from "../DeleteItem";
 import TrashItem from "../TrashItem";
+import EditItem from "../EditItem";
 
 export const categoryTableColumns: ColumnDef<Category>[] = [
   {
@@ -31,10 +32,13 @@ export const categoryTableColumns: ColumnDef<Category>[] = [
       const id = row.original._id;
       const url = `/category/${id}/`;
       return (
-        <TrashItem
-          url={url}
-          revalidationURL={["/category/", "/author/", "/book/"]}
-        />
+        <div className="flex gap-x-4 justify-end">
+          <TrashItem
+            url={url}
+            revalidationURL={["/category/", "/author/", "/book/"]}
+          />
+          <EditItem id={id} type="categories" />
+        </div>
       );
     },
   },

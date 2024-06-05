@@ -12,12 +12,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { useLibraryPostMutation } from "@/hooks/useMutation";
+import {
+  useLibraryPostMutation,
+  useLibraryPutMutation,
+} from "@/hooks/useMutation";
 import { Category, TResponse } from "@/types/main";
 import { toast } from "sonner";
 import revalidate from "@/lib/revalidate";
 import { Cookies } from "react-cookie";
 import { UserIdKey } from "@/constants/strings";
+import useSearchParams from "@/hooks/useSearchParams";
+import { useLibraryQuery } from "@/hooks/useQuery";
 
 const URLs = {
   post: "/category/",
@@ -33,6 +38,9 @@ interface ICategoryFormRequest {
 }
 
 export default function CategoryForm() {
+  const { get, updateSearchParams } = useSearchParams();
+  const id = get("id");
+
   const form = useForm<z.infer<typeof CategoryFormSchema>>({
     resolver: zodResolver(CategoryFormSchema),
     defaultValues: {
@@ -40,6 +48,30 @@ export default function CategoryForm() {
     },
     mode: "onChange",
     reValidateMode: "onChange",
+  });
+
+  useLibraryQuery<TResponse<Category>>(`/category/${id}/`, {
+    onSuccess(data) {
+      if (data) {
+        form.setValue("name", data.data.name);
+      }
+    },
+  });
+
+  const { trigger: update, isMutating: isUpdating } = useLibraryPutMutation<
+    TResponse<string>
+  >(`/category/${id}/`, {
+    onSuccess(data) {
+      if (data) {
+        toast.success(data.message);
+        updateSearchParams({ id: undefined, type: undefined });
+        revalidate(`/category/`);
+        form.reset();
+      }
+    },
+    onError(error) {
+      toast.error(error.message);
+    },
   });
 
   const { trigger, isMutating } = useLibraryPostMutation<
@@ -60,7 +92,11 @@ export default function CategoryForm() {
 
   async function onSubmit(data: z.infer<typeof CategoryFormSchema>) {
     const userId = new Cookies().get(UserIdKey);
-    trigger({ ...data, userId });
+    if (id) {
+      update({ ...data, userId });
+    } else {
+      trigger({ ...data, userId });
+    }
   }
   return (
     <Form {...form}>
@@ -80,7 +116,7 @@ export default function CategoryForm() {
         />
 
         <Button type="submit" className="w-full" disabled={false}>
-          Add Category
+          {id ? "Submit" : "Add Category"}
         </Button>
       </form>
     </Form>

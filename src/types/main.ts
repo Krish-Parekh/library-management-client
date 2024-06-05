@@ -1,6 +1,6 @@
 export type TStatCard = "users" | "books" | "authors" | "categories";
 
-export type SearchParams = "id"
+export type SearchParams = "id" | "type"
 
 export type TBookCategory =
   | "fiction"

@@ -14,12 +14,22 @@ import useLibraryAuthor from "@/hooks/useLibraryAuthor";
 import { authorTableColumns } from "../table/author/column";
 import useLibraryCategory from "@/hooks/useLibraryCategory";
 import { categoryTableColumns } from "../table/category/columns";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
+import LoginForm from "../forms/LoginForm";
+import useSearchParams from "@/hooks/useSearchParams";
+import UserEditForm from "../forms/UserEditForm";
+import BookForm from "../forms/BookForm";
+import AuthorForm from "../forms/AuthorForm";
+import CategoryForm from "../forms/CategoryForm";
 
 export default function AdminDashboard() {
   const { users, userLoading } = useLibraryUser();
   const { books, bookLoading } = useLibraryBook({ search: "" });
   const { authors, authorLoading } = useLibraryAuthor();
   const { categories, categoryLoading } = useLibraryCategory();
+  const { get, updateSearchParams } = useSearchParams();
+  const id = get("id");
+  const type = get("type");
   return (
     <MaxWidthContainer>
       <Navbar username="Admin" />
@@ -81,6 +91,22 @@ export default function AdminDashboard() {
           )}
         </TabsContent>
       </Tabs>
+      <Dialog
+        open={!!id && !!type}
+        onOpenChange={(open: boolean) => {
+          if (!open) {
+            updateSearchParams({ id: undefined, type: undefined });
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogTitle>Edit {type}</DialogTitle>
+          {type === "users" && <UserEditForm />}
+          {type === "books" && <BookForm />}
+          {type === "authors" && <AuthorForm />}
+          {type === "categories" && <CategoryForm />}
+        </DialogContent>
+      </Dialog>
     </MaxWidthContainer>
   );
 }

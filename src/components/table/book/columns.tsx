@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Author, Book, Category } from "@/types/main";
 import DeleteItem from "../DeleteItem";
 import TrashItem from "../TrashItem";
+import EditItem from "../EditItem";
 
 export const bookTableColumns: ColumnDef<Book>[] = [
   {
@@ -40,7 +41,7 @@ export const bookTableColumns: ColumnDef<Book>[] = [
     accessorKey: "authorId",
     cell: ({ row }) => {
       const author = row.getValue("authorId") as Author;
-      return author.name ?? "N/A";
+      return author ? author.name : "NA";
     },
   },
   {
@@ -63,10 +64,13 @@ export const bookTableColumns: ColumnDef<Book>[] = [
       const id = row.original._id;
       const url = `/book/${id}/`;
       return (
-        <TrashItem
-          url={url}
-          revalidationURL={["/author/", "/book/", "/category/"]}
-        />
+        <div className="flex gap-x-4 justify-end">
+          <TrashItem
+            url={url}
+            revalidationURL={["/author/", "/book/", "/category/"]}
+          />
+          <EditItem id={id} type="books" />
+        </div>
       );
     },
   },

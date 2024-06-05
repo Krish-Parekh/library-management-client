@@ -13,12 +13,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "../ui/button";
-import { useLibraryPostMutation } from "@/hooks/useMutation";
+import {
+  useLibraryPostMutation,
+  useLibraryPutMutation,
+} from "@/hooks/useMutation";
 import { Author, TResponse } from "@/types/main";
 import { toast } from "sonner";
 import revalidate from "@/lib/revalidate";
 import { Cookies } from "react-cookie";
 import { UserIdKey } from "@/constants/strings";
+import useSearchParams from "@/hooks/useSearchParams";
+import { useLibraryQuery } from "@/hooks/useQuery";
 
 export const AuthorFormSchema = z.object({
   name: z.string().min(3),
@@ -32,6 +37,9 @@ interface IAuthorFormRequest {
 }
 
 export default function AuthorForm() {
+  const { get, updateSearchParams } = useSearchParams();
+  const id = get("id");
+
   const form = useForm<z.infer<typeof AuthorFormSchema>>({
     resolver: zodResolver(AuthorFormSchema),
     defaultValues: {
@@ -42,6 +50,30 @@ export default function AuthorForm() {
     reValidateMode: "onChange",
   });
 
+  useLibraryQuery<TResponse<Author>>(`/author/${id}/`, {
+    onSuccess(data) {
+      if (data) {
+        form.setValue("name", data.data.name);
+        form.setValue("description", data.data.description);
+      }
+    },
+  });
+
+  const { trigger: update, isMutating: isUpdating } = useLibraryPutMutation<
+    TResponse<string>
+  >(`/author/${id}/`, {
+    onSuccess(data) {
+      if (data) {
+        toast.success(data.message);
+        updateSearchParams({ id: undefined, type: undefined });
+        revalidate(`/author/`);
+        form.reset();
+      }
+    },
+    onError(error) {
+      toast.error(error.message);
+    },
+  });
 
   const { trigger, isMutating } = useLibraryPostMutation<
     IAuthorFormRequest,
@@ -61,10 +93,17 @@ export default function AuthorForm() {
 
   async function onSubmit(data: z.infer<typeof AuthorFormSchema>) {
     const userId = new Cookies().get(UserIdKey);
-    trigger({
-      ...data,
-      userId,
-    });
+    if (id) {
+      return update({
+        ...data,
+        userId,
+      });
+    } else {
+      trigger({
+        ...data,
+        userId,
+      });
+    }
   }
   return (
     <Form {...form}>
@@ -101,8 +140,12 @@ export default function AuthorForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" disabled={isMutating}>
-          Add Author
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isMutating || isUpdating}
+        >
+          {id ? "Submit" : "Add Author"}
         </Button>
       </form>
     </Form>

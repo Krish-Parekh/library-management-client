@@ -45,7 +45,7 @@ export const userTableColumns: ColumnDef<User>[] = [
       return (
         <div className="flex gap-x-4 justify-end">
           <TrashItem url={url} revalidationURL={["/user/"]} />
-          <EditItem />
+          <EditItem id={id} type="users" />
         </div>
       );
     },

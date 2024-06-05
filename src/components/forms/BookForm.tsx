@@ -15,13 +15,18 @@ import { z } from "zod";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
-import { Book, TBookCategory } from "@/types/main";
-import { useLibraryPostMutation } from "@/hooks/useMutation";
+import { Book, TBookCategory, TResponse } from "@/types/main";
+import {
+  useLibraryPostMutation,
+  useLibraryPutMutation,
+} from "@/hooks/useMutation";
 import AuthorSelect from "../select/AuthorSelect";
 import CategorySelect from "../select/CategorySelect";
 import { UserIdKey } from "@/constants/strings";
 import { Cookies } from "react-cookie";
 import revalidate from "@/lib/revalidate";
+import useSearchParams from "@/hooks/useSearchParams";
+import { useLibraryQuery } from "@/hooks/useQuery";
 
 const URLs = {
   post: "/book/",
@@ -45,6 +50,9 @@ export const BookFormSchema = z.object({
 });
 
 export default function BookForm() {
+  const { get, updateSearchParams } = useSearchParams();
+  const id = get("id");
+
   const form = useForm<z.infer<typeof BookFormSchema>>({
     resolver: zodResolver(BookFormSchema),
     defaultValues: {
@@ -56,6 +64,34 @@ export default function BookForm() {
     },
     mode: "onChange",
     reValidateMode: "onChange",
+  });
+
+  useLibraryQuery<TResponse<Book>>(`/book/${id}/`, {
+    onSuccess(data) {
+      if (data) {
+        form.setValue("title", data.data.title);
+        form.setValue("description", data.data.description);
+        form.setValue("isbn", data.data.isbn);
+        form.setValue("authorId", data.data.authorId._id);
+        form.setValue("categoryId", data.data.categoryId._id);
+      }
+    },
+  });
+
+  const { trigger: update, isMutating: isUpdating } = useLibraryPutMutation<
+    TResponse<string>
+  >(`/book/${id}/`, {
+    onSuccess(data) {
+      if (data) {
+        toast.success(data.message);
+        form.reset();
+        updateSearchParams({ id: undefined, type: undefined });
+        revalidate(`/book/`);
+      }
+    },
+    onError(error) {
+      toast.error(error.message);
+    },
   });
 
   const { trigger, isMutating } = useLibraryPostMutation<IBookRequest, any>(
@@ -82,7 +118,11 @@ export default function BookForm() {
       categoryId: data.categoryId as TBookCategory,
       userId,
     };
-    await trigger(payload);
+    if (id) {
+      await update(payload);
+    } else {
+      await trigger(payload);
+    }
   }
 
   return (
@@ -123,22 +163,6 @@ export default function BookForm() {
 
         <FormField
           control={form.control}
-          name="authorId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Author</FormLabel>
-              <FormControl>
-                <AuthorSelect onValueChange={field.onChange} defaultValue={field.value} />
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.authorId?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
           name="isbn"
           render={({ field }) => (
             <FormItem>
@@ -147,6 +171,25 @@ export default function BookForm() {
                 <Input placeholder="eg. 9780062316097" {...field} />
               </FormControl>
               <FormMessage>{form.formState.errors.isbn?.message}</FormMessage>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="authorId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Author</FormLabel>
+              <FormControl>
+                <AuthorSelect
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                />
+              </FormControl>
+              <FormMessage>
+                {form.formState.errors.authorId?.message}
+              </FormMessage>
             </FormItem>
           )}
         />
@@ -168,7 +211,7 @@ export default function BookForm() {
         />
 
         <Button type="submit" className="w-full" disabled={isMutating}>
-          Add Book
+          {id ? "Submit" : "Add Book"}
         </Button>
       </form>
     </Form>

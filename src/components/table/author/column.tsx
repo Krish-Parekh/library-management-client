@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Author } from "@/types/main";
 import DeleteItem from "../DeleteItem";
 import TrashItem from "../TrashItem";
+import EditItem from "../EditItem";
 
 export const authorTableColumns: ColumnDef<Author>[] = [
   {
@@ -37,10 +38,13 @@ export const authorTableColumns: ColumnDef<Author>[] = [
       const id = row.original._id;
       const url = `/author/${id}/`;
       return (
-        <TrashItem
-          url={url}
-          revalidationURL={["/author/", "/book/", "/category/"]}
-        />
+        <div className="flex gap-x-4 justify-end">
+          <TrashItem
+            url={url}
+            revalidationURL={["/author/", "/book/", "/category/"]}
+          />
+          <EditItem id={id} type="authors" />
+        </div>
       );
     },
   },

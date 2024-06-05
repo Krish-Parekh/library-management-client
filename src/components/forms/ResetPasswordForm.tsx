@@ -19,7 +19,7 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { useLibraryPostMutation } from "@/hooks/useMutation";
 import { TResponse } from "@/types/main";
 import { toast } from "sonner";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface TResetPasswordRequest {
   userId: string;

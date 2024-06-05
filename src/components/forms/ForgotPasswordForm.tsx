@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React from "react";
 import {
   Form,
   FormField,
@@ -64,31 +64,27 @@ export default function ForgotPasswordForm() {
     await trigger(data);
   }
   return (
-    <Suspense fallback={null}>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="eg. krish@gmail.com" {...field} />
-                </FormControl>
-                <FormMessage>
-                  {form.formState.errors.email?.message}
-                </FormMessage>
-              </FormItem>
-            )}
-          />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="eg. krish@gmail.com" {...field} />
+              </FormControl>
+              <FormMessage>{form.formState.errors.email?.message}</FormMessage>
+            </FormItem>
+          )}
+        />
 
-          <Button type="submit" className="w-full" disabled={isMutating}>
-            {isMutating && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
-            Send Link
-          </Button>
-        </form>
-      </Form>
-    </Suspense>
+        <Button type="submit" className="w-full" disabled={isMutating}>
+          {isMutating && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
+          Send Link
+        </Button>
+      </form>
+    </Form>
   );
 }

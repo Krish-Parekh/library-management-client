@@ -20,7 +20,6 @@ export default function Home() {
       <Input
         placeholder="Search"
         value={input}
-        disabled={books?.data.length === 0}
         onChange={(event) => {
           setInput(event.target.value);
         }}

@@ -83,14 +83,13 @@ export default function LoginForm() {
           expires: getExpiryFromToken(token),
         });
         
-        toast.success(data.message);
-        form.reset();  
-
         if (role === "admin") {
           router.replace("/admin");
         } else {
           router.replace("/");
         }
+        toast.success(data.message);
+        form.reset(); 
       }
     },
     onError(error) {

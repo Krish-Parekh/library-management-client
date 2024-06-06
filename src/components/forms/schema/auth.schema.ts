@@ -11,11 +11,11 @@ export const LoginFormSchema = z.object({
       message:
         "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character",
     })
-    .min(8),
+    .min(8).max(255),
 });
 
 export const SignupFormSchema = z.object({
-  username: z.string().min(3, { message: "Invalid username" }),
+  username: z.string().min(1, { message: "Invalid username" }).max(255),
   email: z.string().email({ message: "Invalid email address" }),
   password: z
     .string()
@@ -23,5 +23,19 @@ export const SignupFormSchema = z.object({
       message:
         "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character",
     })
-    .min(8),
+    .min(8).max(255),
+});
+
+export const ForgotPasswordFormSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+})
+
+export const ResetPasswordFormSchema = z.object({
+  password: z.string()
+  .regex(passwordRegex, {
+    message:
+      "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character",
+  })
+  .min(8)
+  .max(255),
 });

@@ -47,7 +47,7 @@ export default function UserEditForm() {
     {
       onSuccess(data) {
         toast.success("User updated successfully");
-        revalidate("/user/")
+        revalidate("/user/");
         updateSearchParams({ id: undefined, type: undefined });
       },
       onError(error) {
@@ -71,7 +71,9 @@ export default function UserEditForm() {
     await trigger(data);
   }
 
-  return (
+  return isLoading ? (
+    <ReloadIcon className="h-4 w-4 animate-spin" />
+  ) : (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField

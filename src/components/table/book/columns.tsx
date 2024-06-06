@@ -26,9 +26,6 @@ export const bookTableColumns: ColumnDef<Book>[] = [
     id: "title",
     header: "Title",
     accessorKey: "title",
-    cell: ({ row }) => {
-      return <div>{row.getValue("title")}</div>;
-    },
   },
   {
     id: "description",

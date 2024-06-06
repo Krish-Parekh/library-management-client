@@ -33,7 +33,7 @@ export default function AdminDashboard() {
   return (
     <MaxWidthContainer>
       <Navbar username="Admin" />
-      <div className="flex gap-x-4">
+      <div className="flex flex-col md:flex-row gap-4">
         <StatCard
           title="Users"
           count={users ? users.data.length : 0}

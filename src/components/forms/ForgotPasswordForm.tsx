@@ -19,14 +19,11 @@ import { TResponse } from "@/types/main";
 import { toast } from "sonner";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
+import { ForgotPasswordFormSchema } from "./schema/auth.schema";
 
 interface TForgotPasswordRequest {
   email: string;
 }
-
-export const ForgotPasswordSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-});
 
 const URLs = {
   post: "/auth/forgot-password/",
@@ -34,8 +31,8 @@ const URLs = {
 
 export default function ForgotPasswordForm() {
   const router = useRouter();
-  const form = useForm<z.infer<typeof ForgotPasswordSchema>>({
-    resolver: zodResolver(ForgotPasswordSchema),
+  const form = useForm<z.infer<typeof ForgotPasswordFormSchema>>({
+    resolver: zodResolver(ForgotPasswordFormSchema),
     defaultValues: {
       email: "",
     },
@@ -60,7 +57,7 @@ export default function ForgotPasswordForm() {
     },
   });
 
-  async function onSubmit(data: z.infer<typeof ForgotPasswordSchema>) {
+  async function onSubmit(data: z.infer<typeof ForgotPasswordFormSchema>) {
     await trigger(data);
   }
   return (

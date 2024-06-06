@@ -24,6 +24,7 @@ import { Cookies } from "react-cookie";
 import { UserIdKey } from "@/constants/strings";
 import useSearchParams from "@/hooks/useSearchParams";
 import { useLibraryQuery } from "@/hooks/useQuery";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export const AuthorFormSchema = z.object({
   name: z.string().min(3),
@@ -50,7 +51,7 @@ export default function AuthorForm() {
     reValidateMode: "onChange",
   });
 
-  useLibraryQuery<TResponse<Author>>(`/author/${id}/`, {
+  const { isLoading } = useLibraryQuery<TResponse<Author>>(`/author/${id}/`, {
     onSuccess(data) {
       if (data) {
         form.setValue("name", data.data.name);
@@ -67,6 +68,7 @@ export default function AuthorForm() {
         toast.success(data.message);
         updateSearchParams({ id: undefined, type: undefined });
         revalidate(`/author/`);
+        revalidate(`/book/`)
         form.reset();
       }
     },
@@ -105,7 +107,9 @@ export default function AuthorForm() {
       });
     }
   }
-  return (
+  return isLoading ? (
+    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+  ) : (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
@@ -145,6 +149,7 @@ export default function AuthorForm() {
           className="w-full"
           disabled={isMutating || isUpdating}
         >
+          {(isMutating || isUpdating) && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
           {id ? "Submit" : "Add Author"}
         </Button>
       </form>

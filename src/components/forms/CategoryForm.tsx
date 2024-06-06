@@ -23,14 +23,12 @@ import { Cookies } from "react-cookie";
 import { UserIdKey } from "@/constants/strings";
 import useSearchParams from "@/hooks/useSearchParams";
 import { useLibraryQuery } from "@/hooks/useQuery";
+import { CategoryFormSchema } from "@/components/forms/schema/category.schema";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const URLs = {
   post: "/category/",
 };
-
-export const CategoryFormSchema = z.object({
-  name: z.string().min(3),
-});
 
 interface ICategoryFormRequest {
   name: string;
@@ -50,13 +48,16 @@ export default function CategoryForm() {
     reValidateMode: "onChange",
   });
 
-  useLibraryQuery<TResponse<Category>>(`/category/${id}/`, {
-    onSuccess(data) {
-      if (data) {
-        form.setValue("name", data.data.name);
-      }
-    },
-  });
+  const { isLoading } = useLibraryQuery<TResponse<Category>>(
+    `/category/${id}/`,
+    {
+      onSuccess(data) {
+        if (data) {
+          form.setValue("name", data.data.name);
+        }
+      },
+    }
+  );
 
   const { trigger: update, isMutating: isUpdating } = useLibraryPutMutation<
     TResponse<string>
@@ -66,6 +67,7 @@ export default function CategoryForm() {
         toast.success(data.message);
         updateSearchParams({ id: undefined, type: undefined });
         revalidate(`/category/`);
+        revalidate(`/book/`)
         form.reset();
       }
     },
@@ -98,7 +100,9 @@ export default function CategoryForm() {
       trigger({ ...data, userId });
     }
   }
-  return (
+  return isLoading ? (
+    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+  ) : (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
@@ -115,7 +119,14 @@ export default function CategoryForm() {
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={false}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isMutating || isUpdating}
+        >
+          {(isMutating || isUpdating) && (
+            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+          )}
           {id ? "Submit" : "Add Category"}
         </Button>
       </form>

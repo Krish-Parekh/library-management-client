@@ -9,6 +9,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Book } from "@/types/main";
+import Link from "next/link";
+import { LibraryBaseURL } from "@/constants/strings";
 
 interface IBookCardProps {
   book: Book;
@@ -27,7 +29,7 @@ export default function BookCard({ book }: IBookCardProps) {
           <Badge variant="outline">{book.isbn}</Badge>
           <Badge variant="outline">{book.authorId.name}</Badge>
         </div>
-        <Button>Download</Button>
+        <Link className="" href={`${LibraryBaseURL}/download`} target="_blank">Download</Link>
       </CardContent>
     </Card>
   );

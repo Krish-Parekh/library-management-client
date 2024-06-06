@@ -27,6 +27,8 @@ import { Cookies } from "react-cookie";
 import revalidate from "@/lib/revalidate";
 import useSearchParams from "@/hooks/useSearchParams";
 import { useLibraryQuery } from "@/hooks/useQuery";
+import { BookFormSchema } from "@/components/forms/schema/book.schema";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const URLs = {
   post: "/book/",
@@ -40,14 +42,6 @@ interface IBookRequest {
   categoryId: TBookCategory;
   userId: string;
 }
-
-export const BookFormSchema = z.object({
-  title: z.string().min(3),
-  description: z.string().min(10),
-  authorId: z.string().min(3),
-  isbn: z.string().length(13),
-  categoryId: z.string(),
-});
 
 export default function BookForm() {
   const { get, updateSearchParams } = useSearchParams();
@@ -66,7 +60,7 @@ export default function BookForm() {
     reValidateMode: "onChange",
   });
 
-  useLibraryQuery<TResponse<Book>>(`/book/${id}/`, {
+  const { isLoading } = useLibraryQuery<TResponse<Book>>(`/book/${id}/`, {
     onSuccess(data) {
       if (data) {
         form.setValue("title", data.data.title);
@@ -125,7 +119,9 @@ export default function BookForm() {
     }
   }
 
-  return (
+  return isLoading ? (
+    <ReloadIcon className="h-4 w-4 animate-spin" />
+  ) : (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
@@ -210,7 +206,8 @@ export default function BookForm() {
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isMutating}>
+        <Button type="submit" className="w-full" disabled={isMutating || isUpdating}>
+          {(isMutating || isUpdating) && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
           {id ? "Submit" : "Add Book"}
         </Button>
       </form>

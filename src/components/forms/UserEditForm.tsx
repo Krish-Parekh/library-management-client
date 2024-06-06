@@ -32,14 +32,14 @@ export const UserFormSchema = z.object({
 export default function UserEditForm() {
   const { get, updateSearchParams } = useSearchParams();
   const id = get("id");
-
-  const { isLoading } = useLibraryQuery<TResponse<User>>(`/user/${id}`, {
+  const { isLoading } = useLibraryQuery<TResponse<User>>(id ? `/user/${id}` : null , {
     onSuccess(data) {
       if (data) {
         form.setValue("username", data.data.username);
         form.setValue("email", data.data.email);
       }
     },
+    shouldRetryOnError: false,
   });
 
   const { trigger, isMutating } = useLibraryPutMutation<TResponse<string>>(

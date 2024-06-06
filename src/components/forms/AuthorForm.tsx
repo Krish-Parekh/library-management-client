@@ -51,14 +51,17 @@ export default function AuthorForm() {
     reValidateMode: "onChange",
   });
 
-  const { isLoading } = useLibraryQuery<TResponse<Author>>(`/author/${id}/`, {
-    onSuccess(data) {
-      if (data) {
-        form.setValue("name", data.data.name);
-        form.setValue("description", data.data.description);
-      }
-    },
-  });
+  const { isLoading } = useLibraryQuery<TResponse<Author>>(
+    id ? `/author/${id}/` : null,
+    {
+      onSuccess(data) {
+        if (data) {
+          form.setValue("name", data.data.name);
+          form.setValue("description", data.data.description);
+        }
+      },
+    }
+  );
 
   const { trigger: update, isMutating: isUpdating } = useLibraryPutMutation<
     TResponse<string>
@@ -68,7 +71,7 @@ export default function AuthorForm() {
         toast.success(data.message);
         updateSearchParams({ id: undefined, type: undefined });
         revalidate(`/author/`);
-        revalidate(`/book/`)
+        revalidate(`/book/`);
         form.reset();
       }
     },
@@ -149,7 +152,9 @@ export default function AuthorForm() {
           className="w-full"
           disabled={isMutating || isUpdating}
         >
-          {(isMutating || isUpdating) && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
+          {(isMutating || isUpdating) && (
+            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+          )}
           {id ? "Submit" : "Add Author"}
         </Button>
       </form>

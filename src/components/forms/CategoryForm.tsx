@@ -49,7 +49,7 @@ export default function CategoryForm() {
   });
 
   const { isLoading } = useLibraryQuery<TResponse<Category>>(
-    `/category/${id}/`,
+    id ? `/category/${id}/` : null,
     {
       onSuccess(data) {
         if (data) {
@@ -67,7 +67,7 @@ export default function CategoryForm() {
         toast.success(data.message);
         updateSearchParams({ id: undefined, type: undefined });
         revalidate(`/category/`);
-        revalidate(`/book/`)
+        revalidate(`/book/`);
         form.reset();
       }
     },

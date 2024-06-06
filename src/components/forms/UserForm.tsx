@@ -19,18 +19,13 @@ import { Button } from "../ui/button";
 import { useLibraryPostMutation } from "@/hooks/useMutation";
 import { toast } from "sonner";
 import { TResponse } from "@/types/main";
+import { SignupFormSchema } from "@/components/forms/schema/auth.schema";
 
 interface TSignupRequest {
   username: string;
   email: string;
   password: string;
 }
-
-export const SignupFormSchema = z.object({
-  username: z.string().min(3, { message: "Invalid username" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(8),
-});
 
 export default function UserForm() {
   const form = useForm<z.infer<typeof SignupFormSchema>>({

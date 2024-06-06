@@ -54,23 +54,26 @@ export default function BookForm() {
       description: "",
       authorId: "",
       isbn: "",
-      categoryId: "fiction",
+      categoryId: "",
     },
     mode: "onChange",
     reValidateMode: "onChange",
   });
 
-  const { isLoading } = useLibraryQuery<TResponse<Book>>(`/book/${id}/`, {
-    onSuccess(data) {
-      if (data) {
-        form.setValue("title", data.data.title);
-        form.setValue("description", data.data.description);
-        form.setValue("isbn", data.data.isbn);
-        form.setValue("authorId", data.data.authorId._id);
-        form.setValue("categoryId", data.data.categoryId._id);
-      }
-    },
-  });
+  const { isLoading } = useLibraryQuery<TResponse<Book>>(
+    id ? `/book/${id}/` : null,
+    {
+      onSuccess(data) {
+        if (data) {
+          form.setValue("title", data.data.title);
+          form.setValue("description", data.data.description);
+          form.setValue("isbn", data.data.isbn);
+          form.setValue("authorId", data.data.authorId._id);
+          form.setValue("categoryId", data.data.categoryId._id);
+        }
+      },
+    }
+  );
 
   const { trigger: update, isMutating: isUpdating } = useLibraryPutMutation<
     TResponse<string>
@@ -180,7 +183,8 @@ export default function BookForm() {
               <FormControl>
                 <AuthorSelect
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={field.value}  
+                  {...field}
                 />
               </FormControl>
               <FormMessage>
@@ -197,7 +201,7 @@ export default function BookForm() {
             <FormItem>
               <FormLabel>Category</FormLabel>
               <FormControl>
-                <CategorySelect onValueChange={field.onChange} />
+                <CategorySelect onValueChange={field.onChange} defaultValue={field.value}  {...field}/>
               </FormControl>
               <FormMessage>
                 {form.formState.errors.categoryId?.message}
@@ -206,8 +210,14 @@ export default function BookForm() {
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isMutating || isUpdating}>
-          {(isMutating || isUpdating) && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isMutating || isUpdating}
+        >
+          {(isMutating || isUpdating) && (
+            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+          )}
           {id ? "Submit" : "Add Book"}
         </Button>
       </form>

@@ -19,6 +19,7 @@ export default function AuthorSelect({
   id,
   onValueChange,
   defaultValue,
+  ...props
 }: AuthorSelectProps ) {
   const { authors, authorLoading } = useLibraryAuthor();
   const options = authors?.data.map((author) => ({
@@ -26,7 +27,7 @@ export default function AuthorSelect({
     value: author._id,
   }));
   return (
-    <Select disabled={authorLoading} onValueChange={onValueChange} defaultValue={defaultValue}>
+    <Select disabled={authorLoading} onValueChange={onValueChange} defaultValue={defaultValue} {...props}>
       <SelectTrigger>
         <SelectValue placeholder="Select Author" />
       </SelectTrigger>

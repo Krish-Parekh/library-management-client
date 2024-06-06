@@ -10,16 +10,17 @@ import {
 
 interface CategorySelectProps {
   onValueChange: (value: string) => void;
+  defaultValue?: string;
 }
 
-export default function CategorySelect({ onValueChange }: CategorySelectProps) {
+export default function CategorySelect({ onValueChange, defaultValue ,...props }: CategorySelectProps) {
   const { categories, categoryLoading } = useLibraryCategory();
   const options = categories?.data.map((category) => ({
     label: category.name,
     value: category._id,
   }));
   return (
-    <Select disabled={categoryLoading} onValueChange={onValueChange}>
+    <Select defaultValue={defaultValue} disabled={categoryLoading} onValueChange={onValueChange} {...props}>
       <SelectTrigger>
         <SelectValue placeholder="Select Category" />
       </SelectTrigger>

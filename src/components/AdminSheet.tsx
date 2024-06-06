@@ -50,7 +50,7 @@ export function AdminSheet({
         }}
       >
         <SheetTrigger asChild>{trigger}</SheetTrigger>
-        <SheetContent className="w-[500px] sm:w-[540px] sm:max-w-[540px]">
+        <SheetContent className="md:w-[500px]">
           <SheetHeader>
             <SheetTitle>{title}</SheetTitle>
             <SheetDescription>{description}</SheetDescription>

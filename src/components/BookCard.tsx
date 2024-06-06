@@ -29,7 +29,15 @@ export default function BookCard({ book }: IBookCardProps) {
           <Badge variant="outline">{book.isbn}</Badge>
           <Badge variant="outline">{book.authorId.name}</Badge>
         </div>
-        <Link className="" href={`${LibraryBaseURL}/download`} target="_blank">Download</Link>
+        <div>
+          <Link
+            className=""
+            href={`${LibraryBaseURL}/download`}
+            target="_blank"
+          >
+            <Button>Download</Button>
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );

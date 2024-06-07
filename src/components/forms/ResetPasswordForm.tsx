@@ -20,16 +20,13 @@ import { useLibraryPostMutation } from "@/hooks/useMutation";
 import { TResponse } from "@/types/main";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { ResetPasswordFormSchema } from "./schema/auth.schema";
 
 interface TResetPasswordRequest {
   userId: string;
   token: string;
   password: string;
 }
-
-const resetPasswordSchema = z.object({
-  password: z.string().min(8).max(100),
-});
 
 const URLs = {
   post: "/auth/reset-password/",
@@ -40,8 +37,8 @@ export default function ResetPasswordForm() {
   const token = get("token");
   const userId = get("id");
   const router = useRouter();
-  const form = useForm<z.infer<typeof resetPasswordSchema>>({
-    resolver: zodResolver(resetPasswordSchema),
+  const form = useForm<z.infer<typeof ResetPasswordFormSchema>>({
+    resolver: zodResolver(ResetPasswordFormSchema),
     defaultValues: {
       password: "",
     },
@@ -64,7 +61,7 @@ export default function ResetPasswordForm() {
     },
   });
 
-  async function onSubmit(data: z.infer<typeof resetPasswordSchema>) {
+  async function onSubmit(data: z.infer<typeof ResetPasswordFormSchema>) {
     if (!userId || !token) return;
     await trigger({ password: data.password, userId, token });
   }
@@ -79,7 +76,7 @@ export default function ResetPasswordForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordInput {...field} />
+                <PasswordInput placeholder="password" {...field} />
               </FormControl>
               <FormMessage>
                 {form.formState.errors.password?.message}

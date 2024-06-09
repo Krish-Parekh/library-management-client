@@ -38,10 +38,12 @@ pnpm install
 
 3. Set up environment variables:
 
-Create a `.env.local` file in the root directory of your project and add the following environment variable:
+Create a `.env` file in the root directory of your project and add the following environment variable:
+DEV_URL=http://localhost:5000/api/v1
+PROD_URL=https://18.212.99.121/api/v1
 
 ```env
-NEXT_PUBLIC_BASE_URL=http://localhost:5000/api/v1
+NEXT_PUBLIC_BASE_URL=
 ```
 
 ### Running the Development Server

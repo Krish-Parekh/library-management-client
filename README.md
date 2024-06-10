@@ -2,7 +2,7 @@
 
 ## Description
 
-This is a Next.js application that integrates `shadcn` for component design, Tailwind CSS for styling, and SWR for data fetching. It connects to a backend API with the base URL specified in environment variables. The project uses `pnpm` as the package manager.
+This is a Next.js application that integrates `shadcn` for component design, Tailwind CSS for styling, and SWR for data fetching. It connects to a backend API with the base URL specified in environment variables. The project uses `pnpm` as the package manager and is built with typescript.
 
 ## Features
 
@@ -11,6 +11,7 @@ This is a Next.js application that integrates `shadcn` for component design, Tai
 - **Tailwind CSS**: Utility-first CSS framework for rapid UI development.
 - **SWR**: React hooks library for data fetching.
 - **pnpm**: Fast, disk space efficient package manager.
+- **TypeScript**: TypeScript for static type checking and enhanced development experience.
 
 ## Installation
 
@@ -39,8 +40,8 @@ pnpm install
 3. Set up environment variables:
 
 Create a `.env` file in the root directory of your project and add the following environment variable:
-DEV_URL=http://localhost:5000/api/v1
-PROD_URL=https://18.212.99.121/api/v1
+- BASE_URL for Development = http://localhost:5000/api/v1
+- BASE URL for Production = https://18.212.99.121/api/v1
 
 ```env
 NEXT_PUBLIC_BASE_URL=
@@ -87,32 +88,38 @@ pnpm format
 ## Project Structure
 
 ```
-/project-root
+/src
   ├── components/
-  │   ├── Button.js
-  │   ├── Navbar.js
+  │   ├── Button.tsx
+  │   ├── Navbar.tsx
   │   └── ...
   ├── app/
-  │   ├── api/
   │   ├── (auth)
   │   │   ├── login
   │   │   │   ├── page.tsx
   │   │   ├── signup
   │   │   │   ├── page.tsx
+  │   │   ├── ...
   │   ├── (dashboard)
   │   │   ├── admin
   │   │   │   ├── page.tsx
   │   │   ├── page.tsx
-  │   └── ...
-  ├── public/
   │   ├── favicon.ico
+  │   ├── globals.css
+  │   ├── layout.tsx
   │   └── ...
+  ├── hooks/
+  ├── constants/
+  ├── lib/
+  ├── types/
+  ├── middleware.ts
   ├── .env.local
-  ├── next.config.js
-  ├── postcss.config.js
-  ├── tailwind.config.js
+  ├── next.config.mjs
+  ├── postcss.config.mjs
+  ├── tailwind.config.ts
   ├── package.json
   ├── pnpm-lock.yaml
+  ├── tsconfig.json
   └── README.md
 ```
 
@@ -127,10 +134,21 @@ Custom components can be found in the `components` directory. Examples include `
 Next.js automatically creates routes based on the files in the `app` directory. For example:
 
 - `app/(dashboard)/page.ts` - Home page
+- `app/(auth)/login/page.ts` - Login page
+- `app/(auth)/signup/page.ts` - Signup page
 
 ### Styles
 
 Global styles are defined in `app/globals.css`.
+
+### Folder Structure
+- `components`: Reusable components.
+- `app`: Pages and components for the application.
+- `hooks`: Custom hooks for data fetching.
+- `constants`: Constants used in the application.
+- `lib`: Utility functions and services.
+- `types`: TypeScript types and interfaces.
+- `middleware.ts`: Middleware for the application.
 
 ## Deployment
 
